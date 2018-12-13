@@ -54,9 +54,10 @@ export default [
     path: '',
     name: 'doc',
     meta: {
+      hideInMenu: true,
       title: '文档',
       href: 'https://lison16.github.io/iview-admin-doc/#/',
-      icon: 'ios-book'
+      icon: 'ios-book',
     }
   },
   {
@@ -77,7 +78,7 @@ export default [
           title: '帖子列表',
           notCache: true,
           icon: 'logo-buffer',
-
+          access: ['super_admin','admin']
         },
         component: () => import('@/view/used/articles/list.vue')
       },
@@ -100,7 +101,8 @@ export default [
           // hideInMenu: true,
           notCache: true,
           icon: 'logo-buffer',
-          title: '创建帖子'
+          title: '创建帖子',
+          access: ['super_admin','admin']
         },
         component: () => import('@/view/used/articles/new.vue')
       } ,
@@ -111,7 +113,8 @@ export default [
           // hideInMenu: true,
           notCache: true,
           icon: 'logo-buffer',
-          title: '学校列表'
+          title: '学校列表',
+          access: ['super_admin']
         },
         component: () => import('@/view/used/schools/list.vue')
       },
@@ -122,7 +125,8 @@ export default [
           notCache: true,
           hideInMenu: true,
           icon: 'logo-buffer',
-          title: '创建学校'
+          title: '创建学校',
+          access: ['super_admin']
         },
         component: () => import('@/view/used/schools/new.vue')
       },
@@ -133,9 +137,48 @@ export default [
           notCache: true,
           hideInMenu: true,
           icon: 'logo-buffer',
-          title: '学校详情'
+          title: '学校详情',
+          access: ['super_admin']
         },
         component: () => import('@/view/used/schools/detail.vue')
+      },
+
+
+      {
+        path: '/usersList',
+        name: 'usersList',
+        meta: {
+          // hideInMenu: true,
+          notCache: true,
+          icon: 'logo-buffer',
+          title: '用户列表',
+          access: ['super_admin']
+        },
+        component: () => import('@/view/used/users/list.vue')
+      },
+      {
+        path: '/usersNew',
+        name: 'usersNew',
+        meta: {
+          notCache: true,
+          hideInMenu: true,
+          icon: 'logo-buffer',
+          title: '新建用户',
+          access: ['super_admin']
+        },
+        component: () => import('@/view/used/users/new.vue')
+      },
+      {
+        path: '/usersDetail',
+        name: 'usersDetail',
+        meta: {
+          notCache: true,
+          hideInMenu: true,
+          icon: 'logo-buffer',
+          title: '用户详情',
+          access: ['super_admin']
+        },
+        component: () => import('@/view/used/users/detail.vue')
       }
 
     ]

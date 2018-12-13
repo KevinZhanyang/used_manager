@@ -13,20 +13,47 @@
                 <FormItem label="status">
                     <input-number v-model="model.status"></input-number>
                 </FormItem>
-                <FormItem label="name">
-                    <Input v-model="model.name"></Input>
+                <FormItem label="isPartner">
+                    <input-number v-model="model.isPartner"></input-number>
                 </FormItem>
-                <FormItem label="provinceId">
-                    <Input v-model="model.provinceId"></Input>
+                <FormItem label="isTester">
+                    <input-number v-model="model.isTester"></input-number>
+                </FormItem>
+                <FormItem label="scores">
+                    <input-number v-model="model.scores"></input-number>
+                </FormItem>
+                <FormItem label="wechat">
+                    <Input v-model="model.wechat"></Input>
+                </FormItem>
+                <FormItem label="openid">
+                    <Input v-model="model.openid"></Input>
+                </FormItem>
+                <FormItem label="avatar">
+                    <Input v-model="model.avatar"></Input>
+                </FormItem>
+                <FormItem label="nickname">
+                    <Input v-model="model.nickname"></Input>
+                </FormItem>
+                <FormItem label="gender">
+                    <Input v-model="model.gender"></Input>
+                </FormItem>
+                <FormItem label="country">
+                    <Input v-model="model.country"></Input>
+                </FormItem>
+                <FormItem label="province">
+                    <Input v-model="model.province"></Input>
+                </FormItem>
+                <FormItem label="city">
+                    <Input v-model="model.city"></Input>
+                </FormItem>
+                <FormItem label="phone">
+                    <Input v-model="model.phone"></Input>
                 </FormItem>
                 <FormItem label="createdAt">
                     <input-number v-model="model.createdAt"></input-number>
                 </FormItem>
                 <FormItem label="updatedAt">
                     <input-number v-model="model.updatedAt"></input-number>
-                </FormItem>
-                <FormItem label="createId">
-                    <Input v-model="model.createId"></Input>
                 </FormItem>
             </Form>
             <Row style="padding-top: 10px" type="flex" justify="center">
@@ -39,14 +66,14 @@
 
 <script>
 import {trim,trim2Zero} from '@/libs/util.js';
-import schools from '@/model/schools';
+import users from '@/model/users';
 
     /**
- * Info: partner
- * Created by wangyifan on 2018-12-12 10:22:33
+ * Info:
+ * Created by wangyifan on 2018-12-13 17:03:14
  */
 export default {
-    name: 'schoolsNew',
+    name: 'usersNew',
   components: {},
     data () {
         return {
@@ -60,16 +87,26 @@ export default {
   methods: {
     view (id) {
       var _this = this;
-      schools.view(id, {
+      users.view(id, {
         success: function (data) {
+          data = data.body
           _this.model = Object.assign({}, _this.model, {
-            id: trim2Zero(data.body.id),
-            status: trim2Zero(data.body.status),
-            name: data.body.name,
-            provinceId: trim2Zero(data.body.provinceId),
-            createdAt: trim2Zero(data.body.createdAt),
-            updatedAt: trim2Zero(data.body.updatedAt),
-            createId: trim2Zero(data.body.createId)
+            id: trim2Zero(data.id),
+            status: trim2Zero(data.status),
+            isPartner: trim2Zero(data.isPartner),
+            isTester: trim2Zero(data.isTester),
+            scores: trim2Zero(data.scores),
+            wechat: data.wechat,
+            openid: data.openid,
+            avatar: data.avatar,
+            nickname: data.nickname,
+            gender: data.gender,
+            country: data.country,
+            province: data.province,
+            city: data.city,
+            phone: data.phone,
+            createdAt: trim2Zero(data.createdAt),
+            updatedAt: trim2Zero(data.updatedAt)
           });
         }
       });
@@ -79,7 +116,7 @@ export default {
       var _this = this;
         var id = this.$route.params.id;
       if (trim(id)) {
-        schools.update(_this.model, {
+        users.update(_this.model, {
           success: function (data) {
             _this.$Message.success({
               content: '更新成功!',
@@ -90,7 +127,7 @@ export default {
           }
         });
       } else {
-        schools.insert(_this.model, {
+        users.insert(_this.model, {
           success: function (data) {
             _this.$Message.success({
               content: '保存成功!',
@@ -103,7 +140,7 @@ export default {
       }
     },
       goBack() {
-          this.$router.push({path: '/schools/list',name:'schoolsList'});
+          this.$router.push({path: '/users/list',name:'usersList'});
       }
   },
   created: function () {

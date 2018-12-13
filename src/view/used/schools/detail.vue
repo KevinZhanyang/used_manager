@@ -6,7 +6,7 @@
                 详情
             </p>
             <Form :model="model" label-position="right" :label-width="100">
-                
+
                 <FormItem label="id">
                     <input-number v-model="model.id"></input-number>
                 </FormItem>
@@ -61,13 +61,13 @@ export default {
       schools.view(id, {
         success: function (data) {
           _this.model = Object.assign({}, _this.model, {
-            id: trim2Zero(data.id),
-            status: trim2Zero(data.status),
-            name: data.name,
-            provinceId: trim2Zero(data.provinceId),
-            createdAt: trim2Zero(data.createdAt),
-            updatedAt: trim2Zero(data.updatedAt),
-            createId: trim2Zero(data.createId)
+            id: trim2Zero(data.body.id),
+            status: trim2Zero(data.body.status),
+            name: data.body.name,
+            provinceId: trim2Zero(data.body.provinceId),
+            createdAt: trim2Zero(data.body.createdAt),
+            updatedAt: trim2Zero(data.body.updatedAt),
+            createId: trim2Zero(data.body.createId)
           });
         }
       });

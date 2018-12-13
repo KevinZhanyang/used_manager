@@ -32,7 +32,7 @@
         </FormItem>
         <FormItem label="分类">
           <!--<Input v-model="model.categoryId"></Input>-->
-          <Select v-model="model.categoryId" clearable style="width:200px">
+          <Select v-model="model.categoryId" filterable clearable style="width:200px">
             <Option v-for="item in categoriesList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </FormItem>
@@ -40,13 +40,13 @@
 
         <FormItem label="学校">
           <!--<Input v-model="model.schoolId"></Input>-->
-          <Select v-model="model.schoolId" clearable style="width:200px">
+          <Select v-model="model.schoolId" filterable clearable style="width:200px">
             <Option v-for="item in schoolsList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </FormItem>
         <FormItem label="省">
           <!--<Input v-model="model.provinceId"></Input>-->
-          <Select v-model="model.provinceId" clearable style="width:200px">
+          <Select v-model="model.provinceId" filterable clearable style="width:200px">
             <Option v-for="item in provincersList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </FormItem>
@@ -98,7 +98,7 @@
 
 
         <FormItem label="价格">
-          <Input v-model="model.price"></Input>
+          <input-number v-model="model.price"></input-number>
         </FormItem>
         <FormItem label="手机">
           <Input v-model="model.phone"></Input>
@@ -107,31 +107,31 @@
           <Input v-model="model.wechat"></Input>
         </FormItem>
         <FormItem label="经度">
-          <Input v-model="model.longitude"></Input>
+          <input-number v-model="model.longitude"></input-number>
         </FormItem>
         <FormItem label="纬度">
-          <Input v-model="model.latitude"></Input>
+          <input-number v-model="model.latitude"></input-number>
         </FormItem>
         <FormItem label="地址详情">
           <Input v-model="model.address"></Input>
         </FormItem>
         <FormItem label="类型">
           <!--<input-number v-model="model.type"></input-number>-->
-          <Select v-model="model.type" clearable style="width:200px">
+          <Select v-model="model.type"  style="width:200px">
             <Option v-for="item in typeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
         </FormItem>
         <FormItem label="是否最新">
-          <input-number v-model="model.isNew"></input-number>
+          <!--<input-number v-model="model.isNew"></input-number>-->
+          <Select v-model="model.isNew" clearable style="width:200px">
+            <Option v-for="item in isNewList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+          </Select>
         </FormItem>
         <FormItem label="交易方式">
           <!--<Input v-model="model.tardeWays"></Input>-->
           <Select v-model="model.tardeWayList" multiple style="width:260px">
             <Option v-for="item in tardeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
           </Select>
-        </FormItem>
-        <FormItem label="noPage">
-          <input-number v-model="model.noPage"></input-number>
         </FormItem>
       </Form>
       <Row style="padding-top: 10px" type="flex" justify="center">
@@ -176,6 +176,16 @@
             label: '下架'
           },
         ],
+        isNewList:[
+          {
+            value: '0',
+            label: '是'
+          },
+          {
+            value: '1',
+            label: '否'
+          },
+        ],
         onSell: '',//选中上架与否的值
         userList: [],//选择创建人列表
         preUserList: [],
@@ -202,7 +212,10 @@
           label: "求购"
         },],
         title: '',
-        model: { onOffer: 2,
+        model: {
+          type:0,
+          price: 1,
+          onOffer: 1,
           views: 2,
           collect: 2,
           likes: 2},
@@ -334,8 +347,61 @@
             }
           });
         } else {
+          if( !_this.model.onOffer){
+            this.$Message.warning('请选择是否上架');
+            return false;
+          }
+          if(!_this.model.userId){
+            this.$Message.warning('请选择发布用户');
+            return false;
+          }
+          if( !_this.model.categoryId){
+            this.$Message.warning('请选择分类');
+            return false;
+          }
+          if( !_this.model.schoolId){
+            this.$Message.warning('请选择学校');
+            return false;
+          }
+          if(!_this.model.provinceId){
+            this.$Message.warning('请选择省');
+            return false;
+          }
+          if(!_this.model.content){
+            this.$Message.warning('内容必填');
+            return false;
+          }
+          if(!_this.model.price){
+            this.$Message.warning('请输入价格');
+            return false;
+          }
+          if(!_this.model.longitude){
+            this.$Message.warning('请输入经度');
+            return false;
+          }
+          if(!_this.model.latitude){
+            this.$Message.warning('请输入纬度');
+            return false;
+          }
+          if(!_this.model.phone&&!_this.model.wechat){
+            this.$Message.warning('请输入手机号或微信号');
+            return false;
+          }
+          if(!_this.model.type==0&&!_this.model.type==1){
+            console.log(_this.model)
+            this.$Message.warning('请选择帖子类型');
+            return false;
+          }else if(_this.model.type==0&&_this.uploadList.length==0){
+            this.$Message.warning('出售帖子必须上传图片');
+            return false;
+          }
+          if(!_this.model.tardeWayList){
+            this.$Message.warning('请选择交易方式');
+            return false;
+          }
           _this.model.tardeWay = _this.model.tardeWayList.toString();
           _this.model.images= _this.uploadList;
+          _this.model.circleImg="circle";
           console.log(_this.model)
           delete  _this.model.tardeWayList;
           articles.insert(_this.model, {
@@ -378,12 +444,18 @@
         console.log(4343434)
         console.log(this.$refs.upload.fileList)
         console.log(file)
+         var arr = this.uploadList;
+        if(arr.length==0){
+          file.isCover=1;
+        }else {
+          file.isCover=0;
+        }
         file.url = res.body;
         file.name = res.body;
         file.path = res.body;
-//        var arr = this.uploadList;
-//        arr.push(file);
-//        this.uploadList = arr
+
+
+
       },
       handleFormatError(file) {
         this.$Notice.warning({

@@ -159,7 +159,9 @@
                 <span @click="goBack" style="margin: 0 10px;"><Button icon="back">返回</Button></span>
             </Row>
         </Card>
+      <Spin size="large" fix v-if="spinShow"></Spin>
     </div>
+
 </template>
 
 <script>
@@ -178,6 +180,7 @@ export default {
   components: { InputNumber, tQuillEditor, tWebUploader },
   data () {
         return {
+          spinShow: true,
           defaultList:[],
           picDefaulList:[],
           imgName: '',
@@ -206,7 +209,7 @@ export default {
           this.defaultList =arrays
           console.log( _this.picDefaulList)
 
-
+         _this.spinShow=false;
           _this.model = Object.assign({}, _this.model, {
             id: trim2Zero(data.id),
             status: trim2Zero(data.status),
@@ -289,7 +292,7 @@ export default {
       this.$nextTick(() => {
         this.uploadList = this.$refs.upload.fileList;
       });
-    }, 500);
+    }, 2000);
   },
 
   created: function () {

@@ -5,9 +5,34 @@
         <Icon type="mouse"></Icon>
         列表
       </p>
+
       <Row>
         <Input v-model="param.id" placeholder="请输入id搜搜..." style="width: 200px"/>
         <span @click="list" style="margin: 0 10px;"><Button type="primary" icon="search">搜索</Button></span>
+        <span  style="margin: 0 10px;"> <i-switch size="large" v-model="switch1" @on-change="change">
+        <span slot="open">求购</span>
+        <span slot="close">出售</span>
+        </i-switch></span>
+        <span  style="margin: 0 10px;"> <i-switch size="large" v-model="switch2" @on-change="changeSellerStatus">
+        <span slot="open">下架</span>
+        <span slot="close">上架</span>
+        </i-switch></span>
+        <Button v-if="showDelete" @click="modal2 = true" type="warning">批量删除</Button>
+        <Modal v-model="modal2" width="360">
+          <p slot="header" style="color:#f60;text-align:center">
+            <Icon type="ios-information-circle"></Icon>
+            <span>确认删除？</span>
+          </p>
+          <div style="text-align:center">
+            <p>本次将删除 {{deleteItems.length}} 条帖子</p>
+            <p>Will you delete it?</p>
+          </div>
+          <div slot="footer">
+            <Button type="error" size="large" long :loading="modal_loading" @click="del">Delete</Button>
+          </div>
+        </Modal>
+
+
       </Row>
       <Row class="margin-top-10">
         <Table height="600" :loading="lodding" stripe border large :data="itemList" :columns="tableHeader"  @on-selection-change='selectionClick'></Table>
@@ -24,7 +49,7 @@
 <script>
   import articles from '@/model/articles';
   import expandRow from '@/components/tables/table-expand.vue';
-
+  import store from '@/store';
   /**
    *
    * Created by wangyifan on 2018-12-11 12:05:35
@@ -34,8 +59,13 @@
     components: {expandRow},
     data() {
       return {
+        showDelete:false,
+        modal2:false,
+        modal_loading: false,
         itemList: [],
-
+        deleteItems:[],
+        switch1: false,
+        switch2:false,
         tableHeader: [
           {
             type: 'selection',
@@ -46,6 +76,12 @@
             key: 'id',
             title: 'id',
             width: 100,
+            align: 'center'
+          },
+          {
+            key: 'nickname',
+            title: '用户',
+            width: 150,
             align: 'center'
           },
           {
@@ -336,6 +372,26 @@
     watch: {},
     computed: {},
     methods: {
+      change(status) {
+        this.switch1=status;
+        this.pageInfo={
+          _curr: 1,
+          _limit: 10,
+          totalNum: 0,
+          pageSizeOpts: [10, 20, 30, 40]
+        }
+        this.list();
+      },
+      changeSellerStatus(status){
+        this.switch2=status;
+        this.pageInfo={
+          _curr: 1,
+          _limit: 10,
+          totalNum: 0,
+          pageSizeOpts: [10, 20, 30, 40]
+        }
+        this.list();
+      },
       list() {
 
         var _this = this;
@@ -344,6 +400,18 @@
           perPageNum: _this.pageInfo._limit,
           currentPageIndex: _this.pageInfo._curr
         };
+        if(_this.switch1){
+          _this.param.type=1
+        }else {
+          delete  _this.param.type
+        }
+        console.log(878787);
+        console.log(_this.switch2);
+        if(_this.switch2){
+          _this.param.onOffer=1
+        }else {
+          delete  _this.param.onOffer
+        }
         qData = Object.assign({}, qData, _this.param);
 
         articles.query(qData, {
@@ -364,15 +432,59 @@
       add() {
         this.$router.push({path: '/articles/new', name: 'articlesNew', params: {type: '1'}});
       },
-
       edit(p) {
 //        this.$router.push({path: '/articles/new', name: 'articlesNew', params: {id: p.row.id}});
       },
       deleteBy(p) {
         var _this = this;
         var id = p.row.id;
+        console.log(p.row);
+        console.log(store.state.user);
+        if(!_this.showDelete&&p.row.userId!=store.state.user.userId){
+          _this.$Message.warning('这不是你的帖子哦');
+          return false;
+        }
+
         articles.deleteBy(id, {
           success: function (data) {
+            _this.list();
+            _this.$Message.success('删除成功!');
+          }
+        });
+      },
+      del () {
+        this.modal_loading = true;
+        console.log(6565);
+        console.log(this.deleteItems);
+        var _this = this;
+        _this.modal_loading=true;
+        if(this.deleteItems.length==0){
+          _this.modal_loading=false;
+          _this.modal2=false;
+          _this.$Message.warning('请选择要删除的帖子!');
+          return false;
+        }
+        articles.deleteALl(this.deleteItems, {
+          success: function (data) {
+            _this.modal_loading=false;
+            _this.modal2=false;
+            _this.list();
+            _this.deleteItems=[];
+            _this.$Message.success('删除成功!');
+          }
+        });
+      },
+      deleteALl(p) {
+        console.log(6565);
+        var _this = this;
+        _this.modal_loading=true;
+        if(!this.deleteItems||this.deleteItems.lentgh==0){
+          _this.$Message.warning('请选择要删除的帖子!');
+          return false;
+        }
+        articles.deleteALl(this.deleteItems, {
+          success: function (data) {
+            _this.modal_loading=false;
             _this.list();
             _this.$Message.success('删除成功!');
           }
@@ -387,10 +499,20 @@
         this.list();
       },
       selectionClick(arr){
-        console.log(arr);
+
+        this.deleteItems=arr;
       }
     },
     created: function () {
+      var showDelete=false
+
+      store.state.user.access.map((x)=>{
+        if(x=="super_admin"){
+          showDelete=true;
+        }
+
+      })
+      this.showDelete=showDelete;
       this.list();
     }
   }

@@ -117,8 +117,13 @@ export default {
             console.log('------------------------------')
             commit('setAvator', data.avatar)
             commit('setUserName', data.nickname)
-            commit('setUserId', data.Id)
-            commit('setAccess', ['super_admin', 'admin'])
+            commit('setUserId', data.iKevind)
+            if(data.nickname.indexOf("_admin")>0){
+              commit('setAccess', ['super_admin', 'admin'])
+            }else {
+              commit('setAccess', ['admin'])
+            }
+
             commit('setHasGetInfo', true)
             console.log('-------------------dddd-----------')
             console.log(commit)

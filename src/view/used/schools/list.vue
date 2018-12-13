@@ -10,7 +10,7 @@
         <span @click="list" style="margin: 0 10px;"><Button type="primary" icon="search">搜索</Button></span>
       </Row>
       <Row class="margin-top-10">
-        <Table stripe border :data="itemList" :columns="tableHeader"></Table>
+        <Table stripe border :loading="lodding" :data="itemList" :columns="tableHeader"></Table>
       </Row>
       <Row style="padding-top: 10px" type="flex" justify="center">
         <Page :total="pageInfo.totalNum" :current="pageInfo._curr"
@@ -32,6 +32,7 @@
     components: {},
     data(){
       return {
+        lodding:false,
         itemList: [],
         tableHeader:[
       {
@@ -150,6 +151,7 @@
     methods: {
       list(){
         var _this = this;
+        _this.lodding = true;
         var qData = {
           perPageNum: _this.pageInfo._limit,
           currentPageIndex: _this.pageInfo._curr
@@ -160,6 +162,7 @@
           success: function (data) {
             console.log(90909090)
             console.log(data);
+            _this.lodding = false;
             _this.pageInfo.totalNum = data.body.totalNum;
             _this.itemList = data.body['schoolsList'];
           }
