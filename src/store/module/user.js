@@ -110,14 +110,19 @@ export default {
       return new Promise((resolve, reject) => {
         try {
           getUserInfo(state.token).then(res => {
-            console.log(res)
+            console.log(13213215465878978956646464654654646)
             console.log('------------------------------')
             const data = res.data.body.user
+            console.log(data)
+            console.log('------------------------------')
             commit('setAvator', data.avatar)
             commit('setUserName', data.nickname)
             commit('setUserId', data.Id)
             commit('setAccess', ['super_admin', 'admin'])
             commit('setHasGetInfo', true)
+            console.log('-------------------dddd-----------')
+            console.log(commit)
+            console.log('--------------------ddd----------')
             resolve(data)
           }).catch(err => {
             reject(err)

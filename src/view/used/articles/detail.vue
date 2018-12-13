@@ -162,7 +162,6 @@
     </div>
 </template>
 
-
 <script>
 import {trim2Zero} from '@/libs/util';
 import articles from '@/model/articles';
@@ -204,7 +203,7 @@ export default {
 
           console.log(arrays)
           _this.picDefaulList=arrays;
-
+          this.defaultList =arrays
           console.log( _this.picDefaulList)
 
 

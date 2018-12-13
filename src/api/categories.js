@@ -1,24 +1,30 @@
 import axios from '@/libs/api.request'
 
-export const login = ({ userName, password }) => {
-  const data = {
-    username: userName,
-    password
-  }
+
+
+export const listCategories = () => {
   return axios.request({
-    url: '/used/v1/authentication/form',
-    data,
-    method: 'post'
+    url: '/used/v1/categories?perPageNum=1000',
+    method: 'get',
+    data:{perPageNum:1000,currentPageIndex:1}
   })
 }
 
-export const getUserInfo = (token) => {
+export const listSchools = () => {
   return axios.request({
-    url: '/used/v1/currentUser',
-    method: 'get'
+    url: '/used/v1/schools?perPageNum=1000',
+    method: 'get',
+    data:{perPageNum:1000,currentPageIndex:1}
   })
 }
 
+export const listProvinces = () => {
+  return axios.request({
+    url: '/used/v1/provinces?perPageNum=1000',
+    method: 'get',
+    data:{perPageNum:1000,currentPageIndex:1}
+  })
+}
 export const logout = (token) => {
   return axios.request({
     url: '/used/v1/authentication/logout',

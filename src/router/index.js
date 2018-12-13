@@ -18,9 +18,13 @@ const LOGIN_PAGE_NAME = 'login'
 const turnTo = (to, access, next) => {
   if (canTurnTo(to.name, access, routes)) next() // 有权限，可访问
   else next({ replace: true, name: 'error_401' }) // 无权限，重定向到401页面
+  // else next() // 无权限，重定向到401页面
 }
 
 router.beforeEach((to, from, next) => {
+  console.log(to)
+  console.log(from)
+  console.log(to)
   iView.LoadingBar.start()
   const token = getToken()
   if (!token && to.name !== LOGIN_PAGE_NAME) {
